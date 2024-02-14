@@ -4,26 +4,67 @@ let taskList = [];
 
 addButton.addEventListener("click", function() {
     addTask();
-    render();
 });
 
 function addTask() {
-    let taskContent = taskInput.value;
-    taskList.push(taskContent);
-    console.log(taskList);
+    if (taskInput.value.trim() === "") {
+        alert("할 일을 입력하세요.");
+        return;
+    }
+
+    let task = {
+        id: randomIDGenerate(),
+        taskContent: taskInput.value,
+        isComplete: false
+    };
+
+    taskList.push(task);
+    render();
+    taskInput.value = ""; 
 }
 
 function render() {
     let resultHTML = "";
     for (let i = 0; i < taskList.length; i++) {
-        resultHTML += `<div class="task">
-            <div>${taskList[i]}</div>
+        if(taskList[i].isComplete== true){
+            resultHTML += `<div class="task">
+            <div class="task-done">${taskList[i].taskContent}</div>
             <div>
-                <button>Check</button>
-                <button>Delete</button>
+                <button onclick="toggleComplete('${taskList[i].id}')">Check</button>
+                <button onclick="deleteTask()">Delete</button>
+            </div>
+        </div>`;
+        
+        } else{       
+        resultHTML += `<div class="task">
+            <div>${taskList[i].taskContent}</div>
+            <div>
+                <button onclick="toggleComplete('${taskList[i].id}')">Check</button>
+                <button onclick=""deleteTask()">Delete</button>
             </div>
         </div>`;
     }
-
+}
     document.getElementById("task-board").innerHTML = resultHTML;
+}
+
+function toggleComplete(id) {
+    for (let i = 0; i < taskList.length; i++) {
+        if (taskList[i].id === id) {
+            taskList[i].isComplete = !taskList[i].isComplete;
+            break;
+        }
+    }
+    render();
+}
+
+function deleteTask(id) {
+    taskList = taskList.filter(task => task.id !== id);
+    render();
+}
+function deleteTask(){
+    console.log("삭제하자");
+}
+function randomIDGenerate() {
+    return "_" + Math.random().toString(36).substr(2, 9);
 }
